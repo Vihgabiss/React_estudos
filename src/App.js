@@ -1,53 +1,45 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import './style.css';
+
+//https://sujeitoprogramador.com/rn-api/?api=posts
 
 function App(){
-  const [input, setInput] = useState('');
-  const [tarefas, setTarefas] = useState([
-   'Pagar a conta de luz', 
-   'Estudar React JS'
-  ]);
+  const [nutri, setNutri] = useState([]);
 
-  useEffect(()=>{
-    const tarefasStorage = localStorage.getItem('@tarefa');
+  useEffect(() =>{
+    function loadApi(){
+      let url = 'https://sujeitoprogramador.com/rn-api/?api=posts';
 
-    if(tarefasStorage){
-      setTarefas(JSON.parse(tarefasStorage))
+      fetch(url)
+      .then((r)=> r.json())
+      .then((json)=> {
+        console.log(json);
+        setNutri(json);
+      })
     }
+
+    loadApi();
   }, [])
 
-  useEffect(()=>{
-    localStorage.setItem('@tarefa', JSON.stringify(tarefas))
-  }, [tarefas]);
-
-  function handleRegister(e){
-    e.preventDefault();
-
-    setTarefas([...tarefas, input]);
-    setInput('');
-  }
 
   return(
-    <div>
-      <h1>Cadastrando usuário</h1>
+    <div className="container">
+      <header>
+        <strong>React Nutri</strong>
+      </header>
 
-      <form onSubmit={handleRegister}>
-        <label>Nome da tarefa: </label>
-        <br/>
-        <input placeholder="Digite uma tarefa"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}></input>
-
-        <br/><br/>
-        <button type="submit">Registar</button>
-      </form>
-
-      <br/><br/>
-
-      <ul>
-        {tarefas.map(tarefa => (
-          <li key={tarefa}>{tarefa}</li>
-        ))}
-      </ul>
+    {nutri.map((item)=>{
+      return(
+        <article key={item.id} className="post">
+          <strong className="titulo">{item.titulo}</strong>
+          <img src={item.capa} alt={item.titulo} className="capa"/>
+          <p className="subtitulo">
+            {item.subtitulo}
+          </p>
+          <a className="botao">Acessar</a>
+        </article>
+      )
+    })}
     </div>
   );
 }
