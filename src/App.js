@@ -1,8 +1,11 @@
-import Routes from './routes';
 
-export default function App(){
+ function App(){
 
   return(
-      <Routes/>
-  );
+    <div>
+      <h1>Projeto</h1>
+    </div>
+  )
 }
+
+export default App;
