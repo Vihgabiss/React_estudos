@@ -44,7 +44,7 @@ export default function Repositorio(){
 
     return(
         <Container>
-            <BackButton>
+            <BackButton to="/">
                 <FaArrowLeft color="#000" size={30}/>
             </BackButton>
             <Owner>
