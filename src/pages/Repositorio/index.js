@@ -1,7 +1,60 @@
-import React from "react";
+
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import {Container, Owner, Loading, BackButton} from './styles';
+import api from "../../services/api";
+import { FaArrowLeft } from "react-icons/fa";
 
 export default function Repositorio(){
+    const {repositorio} = useParams();
+
+    const [repo, setRepo] = useState({});
+    const [issues, setIssues] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() =>{
+        async function load(){
+            const nomeRepo = decodeURIComponent(repositorio);
+
+            const [repositorioData, issuesData] = await Promise.all([
+                api.get(`/repos/${nomeRepo}`),
+                api.get(`/repos/${nomeRepo}/issues`,{
+                    params:{
+                        state: 'open',
+                        per_page: 5
+                    }
+                })
+            ]);
+
+            setRepo(repositorioData.data);
+            setIssues(issuesData.data);
+            setLoading(false);
+        }
+
+        load();
+    }, [repositorio]);
+
+    if(loading){
+        return(
+            <Loading>
+                <h1>Carregando...</h1>
+            </Loading>
+        )
+    }
+
     return(
-        <h1>Repositorio</h1>
+        <Container>
+            <BackButton>
+                <FaArrowLeft color="#000" size={30}/>
+            </BackButton>
+            <Owner>
+                <img src={repo.owner.avatar_url}
+                alt={repo.owner.login}
+                />
+                <h1>{repo.name}</h1>
+                <p>{repo.description}</p>
+            </Owner>
+
+        </Container>
     )
 }
