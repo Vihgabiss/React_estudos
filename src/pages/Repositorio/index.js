@@ -36,8 +36,23 @@ export default function Repositorio(){
     }, [repositorio]);
 
     useEffect(() => {
-        
-    }, []);
+        async function loadIssue(){
+            const nomeRepo = decodeURIComponent(repositorio);
+
+            const response = await api.get(`/repos/${nomeRepo}/issues`, {
+                params:{
+                    state: 'open',
+                    page,
+                    per_page: 5,
+                },
+            });
+
+            setIssues(response.data);
+        }
+
+        loadIssue();
+
+    }, [repositorio, page]);
 
     function handlePage(action){
         setPage(action === 'back' ? page - 1 : page + 1)
@@ -86,7 +101,10 @@ export default function Repositorio(){
             </IssuesList>
 
             <PageActions>
-               <button type="button" onClick={() => handlePage('back')}>
+               <button type="button" 
+               onClick={() => handlePage('back')}
+               disabled={page < 2}
+               >
                 Voltar
                 </button>
 
